@@ -1,4 +1,4 @@
-name: Build releases
+name: Build
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ on:
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
-        default: 'BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
+        default: 'TESTING_KERNEL=y BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
         type: string
 
 jobs:
@@ -111,14 +111,14 @@ jobs:
         fi
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.4.0
       with:
         name: ${{ github.event.inputs.device }}-openwrt-${{ env.latest_release }}
         path: ${{ env.WORKDIR }}/rom/*
 
     - name: Create release
       continue-on-error: true
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1.14.0
       with:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
