@@ -128,3 +128,16 @@ jobs:
       with:
         name: ${{ matrix.tag.version }}-${{ matrix.model }}
         path: ${{ env.WORKDIR }}/rom/*
+
+    - name: Create release
+      continue-on-error: true
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        name: OpenWrt-${{ env.latest_release }}
+        allowUpdates: true
+        prerelease: false
+        tag: ${{ env.latest_release }}
+        commit: x86_64
+        replacesArtifacts: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: ${{ env.WORKDIR }}/rom/*
