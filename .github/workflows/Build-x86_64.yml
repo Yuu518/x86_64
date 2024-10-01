@@ -1,13 +1,17 @@
-name: Build x86_64 next
+name: Build x86_64
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - 'tags/kernel-6.11'
-      - 'tags/v23'
+    inputs:
+      device:
+        description: 'Device'
+        required: true
+        default: 'x86_64'
+      build_options:
+        description: 'Build options (separate multiple options with spaces)'
+        required: false
+        default: 'TESTING_KERNEL=y BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
+        type: string
 
 jobs:
   build:
@@ -78,7 +82,7 @@ jobs:
       continue-on-error: true
       run: |
         export GITHUB_REPO=${{ github.repository }}
-        export TESTING_KERNEL=y KERNEL_CLANG_LTO=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC14=y ENABLE_MOLD=y BUILD_FAST=y
+        export ${{ github.event.inputs.build_options }}
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
@@ -137,7 +141,6 @@ jobs:
         allowUpdates: true
         prerelease: false
         tag: ${{ env.latest_release }}
-        commit: x86_64
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/rom/*
