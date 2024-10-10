@@ -1,33 +1,19 @@
-name: Build x86_64
+name: Build x86_64 main
 
 on:
   workflow_dispatch:
     inputs:
-      device:
-        description: 'Device'
-        required: true
-        default: 'x86_64'
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
-        default: 'TESTING_KERNEL=y BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
+        default: 'BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
         type: string
-      test:
-        description: 'Using test kernel'
-        required: true
-        default: 'true'
-        type: choice
-        options:
-          - true
-          - false
-      kernel_version:
-        description: 'Kernel version'
-        required: true
-        default: 'testing'
-        type: choice
-        options:
-          - stable
-          - testing
+  push:
+    branches:
+      - master
+    paths:
+      - 'tags/kernel-6.6'
+      - 'tags/v23'
 
 jobs:
   build:
@@ -102,7 +88,7 @@ jobs:
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
-        echo "latest_release=$tags-${{ github.event.inputs.kernel_version }}" >> $GITHUB_ENV
+        echo "latest_release=$tags-Main" >> $GITHUB_ENV
 
     - name: Extensive logs after a failed compilation
       working-directory: /builder
@@ -155,7 +141,7 @@ jobs:
       with:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
-        prerelease: ${{ github.event.inputs.test }}
+        prerelease: false
         tag: ${{ env.latest_release }}
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
