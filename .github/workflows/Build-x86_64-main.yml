@@ -2,12 +2,6 @@ name: Build x86_64 main
 
 on:
   workflow_dispatch:
-    inputs:
-      build_options:
-        description: 'Build options (separate multiple options with spaces)'
-        required: false
-        default: 'BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
-        type: string
   push:
     branches:
       - master
@@ -84,7 +78,7 @@ jobs:
       continue-on-error: true
       run: |
         export GITHUB_REPO=${{ github.repository }}
-        export ${{ github.event.inputs.build_options }}
+        export BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
