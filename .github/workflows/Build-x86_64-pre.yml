@@ -23,8 +23,8 @@ jobs:
         model: 
           - x86_64
         tag:
-          - type: rc2
-            version: snapshots-24.10
+          - type: dev
+            version: snapshot
 
     steps:
     - name: Checkout
@@ -81,8 +81,8 @@ jobs:
         export BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
-        tags=$(git describe --abbrev=0 --tags)
-        echo "latest_release=$tags-Pre" >> $GITHUB_ENV
+        tags=snapshot-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
+        echo "latest_release=$tags" >> $GITHUB_ENV
 
     - name: Extensive logs after a failed compilation
       working-directory: /builder
