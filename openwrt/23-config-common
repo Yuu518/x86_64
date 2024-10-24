@@ -237,8 +237,7 @@ CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
 
 ### Utilities
 CONFIG_PACKAGE_bash=y
-CONFIG_PACKAGE_bind-dig=y
-CONFIG_PACKAGE_node=y
+CONFIG_PACKAGE_bash-completion=y
 CONFIG_PACKAGE_dmesg=y
 CONFIG_PACKAGE_dosfstools=y
 CONFIG_PACKAGE_exfat-fsck=y
@@ -285,6 +284,8 @@ CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_zip=y
 CONFIG_PACKAGE_zoneinfo-asia=y
+CONFIG_PACKAGE_bind-dig=y
+CONFIG_PACKAGE_node=y
 
 ### Shadow Utilities
 # CONFIG_PACKAGE_shadow-gpasswd is not set
