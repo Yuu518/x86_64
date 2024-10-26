@@ -57,6 +57,9 @@ if [ "$version" = "snapshots-24.10" ]; then
     curl -s https://$mirror/openwrt/patch/$generic/0013-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 fi
 
+# kernel: enable Multi-Path TCP
+curl -s https://$mirror/openwrt/patch/$generic/0014-kernel-enable-Multi-Path-TCP-for-SMALL_FLASH-targets.patch | patch -p1
+
 # mold
 if [ "$ENABLE_MOLD" = "y" ] && [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/generic/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
@@ -215,22 +218,17 @@ if [ "$version" = "snapshots-24.10" ] || [ "$version" = "rc2" ]; then
     # add custom nft command support
     curl -s https://$mirror/openwrt/patch/firewall4/100-openwrt-firewall4-add-custom-nft-command-support.patch | patch -p1
     # libnftnl
-    [ "$version" = "rc2" ] && rm -rf package/libs/libnftnl
-    [ "$version" = "rc2" ] && cp -a ../master/openwrt/package/libs/libnftnl package/libs/libnftnl
+    rm -rf package/libs/libnftnl
     mkdir -p package/libs/libnftnl/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/001-libnftnl-add-fullcone-expression-support.patch
-    [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/002-libnftnl-add-brcm-fullcone-support.patch > package/libs/libnftnl/patches/002-libnftnl-add-brcm-fullcone-support.patch
-    sed -i '/PKG_INSTALL:=1/iPKG_FIXUP:=autoreconf' package/libs/libnftnl/Makefile
+    curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/Makefile > package/libs/libnftnl/Makefile
+    curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/0001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/0001-libnftnl-add-fullcone-expression-support.patch
+    curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/0002-libnftnl-add-brcm-fullcone-support.patch > package/libs/libnftnl/patches/0002-libnftnl-add-brcm-fullcone-support.patch
     # nftables
-    [ "$version" = "rc2" ] && rm -rf package/network/utils/nftables
-    [ "$version" = "rc2" ] && cp -a ../master/openwrt/package/network/utils/nftables package/network/utils/nftables
+    rm -rf package/network/utils/nftables
     mkdir -p package/network/utils/nftables/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/nftables/002-nftables-add-fullcone-expression-support.patch > package/network/utils/nftables/patches/002-nftables-add-fullcone-expression-support.patch
-    [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/firewall4/nftables/003-nftables-add-brcm-fullconenat-support.patch > package/network/utils/nftables/patches/003-nftables-add-brcm-fullconenat-support.patch
-    # hide nftables warning message
-    pushd feeds/luci
-        curl -s https://$mirror/openwrt/patch/luci/luci-nftables.patch | patch -p1
-    popd
+    curl -s https://$mirror/openwrt/patch/firewall4/nftables/Makefile > package/network/utils/nftables/Makefile
+    curl -s https://$mirror/openwrt/patch/firewall4/nftables/0001-nftables-add-fullcone-expression-support.patch > package/network/utils/nftables/patches/0001-nftables-add-fullcone-expression-support.patch
+    curl -s https://$mirror/openwrt/patch/firewall4/nftables/0002-nftables-add-brcm-fullconenat-support.patch > package/network/utils/nftables/patches/0002-nftables-add-brcm-fullconenat-support.patch
 fi
 
 # FullCone module
@@ -244,12 +242,14 @@ git clone https://$github/sbwml/package_new_natflow package/new/natflow
 
 # Patch Luci add nft_fullcone/bcm_fullcone & shortcut-fe & natflow & ipv6-nat & custom nft command option
 pushd feeds/luci
-    curl -s https://$mirror/openwrt/patch/firewall4/0001-luci-app-firewall-add-nft-fullcone-and-bcm-fullcone-.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/0002-luci-app-firewall-add-shortcut-fe-option.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/0003-luci-app-firewall-add-ipv6-nat-option.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/0004-luci-add-firewall-add-custom-nft-rule-support.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/0005-luci-app-firewall-add-natflow-offload-support.patch | patch -p1
-    [ "$version" = "snapshots-24.10" ] && curl -s https://$mirror/openwrt/patch/firewall4/0400-luci-app-firewall-drop-bcm-fullcone.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0001-luci-app-firewall-add-nft-fullcone-and-bcm-fullcone-.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0002-luci-app-firewall-add-shortcut-fe-option.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0003-luci-app-firewall-add-ipv6-nat-option.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0004-luci-add-firewall-add-custom-nft-rule-support.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0005-luci-app-firewall-add-natflow-offload-support.patch | patch -p1
+    [ "$version" = "snapshots-24.10" ] && {
+        curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0006-luci-app-firewall-enable-hardware-offload-only-on-de.patch | patch -p1
+    }
 popd
 
 # openssl - quictls
