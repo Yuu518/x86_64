@@ -160,6 +160,7 @@ echo -e "${GREEN_COLOR}GCC VERSION: $gcc_version${RES}"
 [ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG:${RES} ${RED_COLOR}false${RES}"
 [ "$ENABLE_LOCAL_KMOD" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LOCAL_KMOD: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LOCAL_KMOD: false${RES}"
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST:${RES} ${YELLOW_COLOR}false${RES}"
+[ "$ENABLE_CCACHE" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_CCACHE: true${RES}" || echo -e "${YELLOW_COLOR}ENABLE_CCACHE:${RES} ${YELLOW_COLOR}false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
 [ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO:${RES} ${YELLOW_COLOR}false${RES}\r\n"
 
@@ -425,8 +426,10 @@ if [ "$platform" = "x86_64" ]; then
         # driver firmware
         cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/x86_64/base/*natflow*.ipk $kmodpkg_name/
-        cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
-        cp -a bin/packages/x86_64/base/*numa*.ipk $kmodpkg_name/ || true
+        [ "$ENABLE_DPDK" = "y" ] && {
+            cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
+            cp -a bin/packages/x86_64/base/*numa*.ipk $kmodpkg_name/ || true
+        }
         bash kmod-sign $kmodpkg_name
         tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
@@ -466,8 +469,10 @@ elif [ "$platform" = "armv8" ]; then
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
-        cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
+        [ "$ENABLE_DPDK" = "y" ] && {
+            cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
+            cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
+        }
         bash kmod-sign $kmodpkg_name
         tar zcf armv8-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
@@ -531,8 +536,10 @@ else
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
-        cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
+        [ "$ENABLE_DPDK" = "y" ] && {
+            cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
+            cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
+        }
         bash kmod-sign $kmodpkg_name
         tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
