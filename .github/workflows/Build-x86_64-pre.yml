@@ -7,7 +7,6 @@ on:
       - master
     paths:
       - 'tags/kernel-6.12'
-      - 'tags/v23'
 
 jobs:
   build:
@@ -24,7 +23,7 @@ jobs:
           - x86_64
         tag:
           - type: dev
-            version: snapshot
+            version: snapshot-24.10
 
     steps:
     - name: Checkout
@@ -72,13 +71,16 @@ jobs:
         sudo apt-get clean
         git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
 
+    - name: Install LLVM
+      uses: sbwml/actions@install-llvm
+
     - name: Compile OpenWrt
       working-directory: /builder
       id: compile
       continue-on-error: true
       run: |
         export GITHUB_REPO=${{ github.repository }}
-        export BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y
+        export BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC15=y
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=snapshot-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
