@@ -231,6 +231,9 @@ CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
 
 ### Kernel Modules - USB WiFi Adapter
 # CONFIG_PACKAGE_kmod-mt7921u is not set
+# CONFIG_PACKAGE_kmod-rtw88-8812au is not set
+# CONFIG_PACKAGE_kmod-rtw88-8821au is not set
+# CONFIG_PACKAGE_kmod-rtw88-8822bu is not set
 
 ### Utilities
 CONFIG_PACKAGE_bash=y
