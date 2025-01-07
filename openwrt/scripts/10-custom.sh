@@ -26,6 +26,10 @@ sed -i '/ADDON+=USE_QUIC_OPENSSL_COMPAT=1/d' feeds/packages/net/haproxy/Makefile
 # ddns-go
 git clone https://$github/sirpdboy/luci-app-ddns-go package/new/ddns-go
 
+# tailscale
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
+git clone https://github.com/asvow/luci-app-tailscale package/new/luci-app-tailscale
+
 # change golang to amd64-v2 microarchitecture
 sed -i 's/GO_AMD64:=v1/GO_AMD64:=v2/g' feeds/packages/lang/golang/golang-values.mk
 
