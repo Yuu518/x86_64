@@ -30,9 +30,9 @@ ip_info=`curl -sk https://ip.cooluc.com`;
 
 # script url
 if [ "$isCN" = "CN" ]; then
-    export mirror=https://init.cooluc.com
+    export mirror=https://raw.githubusercontent.com/Yuu518/x86_64/master
 else
-    export mirror=https://init2.cooluc.com
+    export mirror=https://raw.githubusercontent.com/Yuu518/x86_64/master
 fi
 
 # github actions - caddy server
